@@ -1,8 +1,12 @@
 use wayland_client::{
     globals::{registry_queue_init, GlobalListContents},
-    protocol::{wl_data_device, wl_data_device_manager, wl_registry, wl_seat},
+    protocol::{
+        wl_data_device, wl_data_device_manager, wl_registry,
+        wl_seat::{self, WlSeat},
+    },
     Connection, Dispatch, Proxy, QueueHandle,
 };
+use wayland_protocols_wlr::data_control::v1::client::zwlr_data_control_device_v1::ZwlrDataControlDeviceV1;
 
 struct ClientState {
     // pub primary_selection_manager_state: Option<,
@@ -67,6 +71,21 @@ impl Dispatch<wl_data_device::WlDataDevice, ()> for ClientState {
     ) {
         match event {
             _ => println!("EVENT: WlDataDevice: {:?}", event),
+        }
+    }
+}
+
+impl Dispatch<ZwlrDataControlDeviceV1, WlSeat> for ClientState {
+    fn event(
+        _state: &mut Self,
+        _proxy: &ZwlrDataControlDeviceV1,
+        event: <ZwlrDataControlDeviceV1 as Proxy>::Event,
+        _data: &WlSeat,
+        _conn: &Connection,
+        _qhandle: &QueueHandle<Self>,
+    ) {
+        match event {
+            _ => println!("EVENT: ZwlrDataControlDeviceV1: {:?}", event),
         }
     }
 }
